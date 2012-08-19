@@ -17,5 +17,6 @@ describe "UserPages" do
 
 		it { should have_selector "h1",			text: "#{user.name}" }
 		it { should have_selector "title",	text: full_title("#{user.name}") }
+		it { should have_selector "img",		src: "gravatar.com/avatar/" }
 	end
 end
