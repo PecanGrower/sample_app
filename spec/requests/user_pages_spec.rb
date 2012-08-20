@@ -34,7 +34,8 @@ describe "UserPages" do
 			before { click_button submit }
 
 			it { should have_selector "title",	text: 'Sign up' }
-			it { should have_selector	'div.alert-error', text: "error" }			
+			it { should have_selector	'div.alert-error', text: "error" }
+			it { should_not have_selector 'div.alert-error', text: "Password digest" }			
 		end
 
 		end
