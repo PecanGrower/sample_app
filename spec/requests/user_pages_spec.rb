@@ -4,6 +4,13 @@ describe "User" do
 
 	subject { page }
 
+	valid_attributes = {
+		name: "Example User",
+		email: "user@example.com",
+		password: "password",
+		password_confirmation: "password"
+	}
+
 	describe "#new" do
 		before { visit signup_path }
 		
@@ -11,7 +18,6 @@ describe "User" do
 		it { should have_selector "title", 	text: full_title('Sign up')}
 
 		describe "form" do
-
 			let(:submit) { "Create my account" }
 
 			describe "with invalid information" do
@@ -30,16 +36,14 @@ describe "User" do
 			end
 
 			describe "with valid information" do
-				let(:valid_user) { FactoryGirl.build(:user)}
-				before { complete_signup_form valid_user }
 
 				it "should create a user" do
-					expect {click_button submit }.to change(User, :count).by(1)
+					expect { signup(valid_attributes) }.to change(User, :count).by(1)
 				end
 
 				describe "after saving the user" do
-					before { click_button submit }
-					let(:user) { User.find_by_email(valid_user.email)}
+					before { signup(valid_attributes) }
+					let(:user) { User.find_by_email(valid_attributes[:email])}
 
 					it { should have_selector 'title', text: user.name }
 					it { should have_success_message 'Welcome' }

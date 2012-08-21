@@ -7,11 +7,13 @@ def signin(user)
   click_button "Sign in"
 end
 
-def complete_signup_form(user)
-  fill_in "Name",					with: user.name
-  fill_in "Email",				with: user.email
-  fill_in "Password",			with: user.password
-  fill_in "Confirmation",	with: user.password_confirmation
+def signup(user)
+  visit signup_path
+  fill_in "Name",					with: user[:name]
+  fill_in "Email",				with: user[:email]
+  fill_in "Password",			with: user[:password]
+  fill_in "Confirmation",	with: user[:password_confirmation]
+  click_button "Create my account"
 end
 
 
