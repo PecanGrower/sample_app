@@ -10,8 +10,7 @@ describe "User" do
 		it { should have_selector "h1", 		text: 'Sign up'}
 		it { should have_selector "title", 	text: full_title('Sign up')}
 
-		describe "signup form" do
-			before { visit signup_path }
+		describe "form" do
 
 			let(:submit) { "Create my account" }
 
