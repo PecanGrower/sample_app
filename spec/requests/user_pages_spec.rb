@@ -6,6 +6,27 @@ describe "User" do
 
 	let(:valid_user) { FactoryGirl.build(:user) }
 
+	describe "#index" do
+		before do
+			signin(FactoryGirl.create(:user))
+			FactoryGirl.create(:user, name: "Bob", email: "bob@example.com")
+			FactoryGirl.create(:user, name: "Ben", email: "ben@example.com")
+			visit users_path
+		end
+		
+		describe "page" do
+			
+			it { should have_selector "title", 	text: "Users" }
+			it { should have_selector "h1",			text: "All users" }
+			it "should display all users" do
+				User.all.each do |user|
+					should have_link user.name, href: user_path(user)
+				end
+			end
+
+		end
+	end
+
 	describe "#new" do
 		before { visit signup_path }
 
@@ -23,13 +44,13 @@ describe "User" do
 					expect { click_button submit }.not_to change(User, :count)
 				end
 
-			describe "after submission" do
-				before { click_button submit }
+				describe "after submission" do
+					before { click_button submit }
 
-				it { should have_selector "title",	text: 'Sign up' }
-				it { should have_error_message }
-				it { should_not have_error_message 'Password digest' }			
-			end
+					it { should have_selector "title",	text: 'Sign up' }
+					it { should have_error_message }
+					it { should_not have_error_message 'Password digest' }			
+				end
 
 			end
 
