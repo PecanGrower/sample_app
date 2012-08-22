@@ -16,6 +16,15 @@ def signup(user)
   click_button "Create my account"
 end
 
+def update_user(user)
+  visit edit_user_path(user)
+  fill_in "Name",         with: "Updated Name"
+  fill_in "Email",        with: "updated_email@example.com"
+  fill_in "Password",     with: user.password
+  fill_in "Confirm Password", with: user.password
+  click_button "Save changes"
+end
+
 
 RSpec::Matchers.define :have_error_message do |message|
 	match do |page|
