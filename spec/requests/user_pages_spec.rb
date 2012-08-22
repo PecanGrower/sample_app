@@ -7,10 +7,13 @@ describe "User" do
 	let(:valid_user) { FactoryGirl.build(:user) }
 
 	describe "#index" do
-		before do
-			signin(FactoryGirl.create(:user))
-			FactoryGirl.create(:user, name: "Bob", email: "bob@example.com")
-			FactoryGirl.create(:user, name: "Ben", email: "ben@example.com")
+		let(:user) { FactoryGirl.create(:user) }
+		
+		before(:all) { 30.times { FactoryGirl.create(:user) } }
+		after(:all) { User.delete_all }
+		
+		before(:each) do
+			signin(user)
 			visit users_path
 		end
 		
@@ -18,12 +21,17 @@ describe "User" do
 			
 			it { should have_selector "title", 	text: "Users" }
 			it { should have_selector "h1",			text: "All users" }
-			it "should display all users" do
-				User.all.each do |user|
-					should have_link user.name, href: user_path(user)
+
+			describe "pagination" do
+
+				it { should have_selector "div.pagination" }
+				it "should display all users" do
+					User.paginate(page: 1).each do |user|
+						should have_link user.name, href: user_path(user)
+						should have_selector "ul.users"
+					end
 				end
 			end
-
 		end
 	end
 
