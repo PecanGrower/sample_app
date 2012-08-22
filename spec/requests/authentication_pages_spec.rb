@@ -11,7 +11,7 @@ describe "Authentication" do
 		it { should have_link 'Sign up now!', href: signup_path }
 	end
 	
-	describe "form" do
+	describe "signin form" do
 		let (:user) { FactoryGirl.create(:user)}
 		before { visit signin_path }
 
@@ -52,6 +52,11 @@ describe "Authentication" do
 					before { visit edit_user_path(user) }					
 					it { should have_selector "title", text: "Sign in" }
 					it { should have_notice_message }
+
+					describe "then signing in" do
+						before { signin(user) }
+						it { should have_selector "title", text: "Edit user" }
+					end
 				end
 
 				describe "submitting a PUT request to the Users#update action" do

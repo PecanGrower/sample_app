@@ -110,25 +110,5 @@ describe "User" do
 				end
 			end
 		end
-
-		# describe "for non-signed in users" do
-		# 	before do
-		# 	  click_link 'Sign out'
-		# 	  visit edit_user_path(user)
-		# 	end
-
-		# 	it { should have_selector "title", text: "Sign in" }
-		# 	it { should have_notice_message }
-		# end
-
-		# describe "for wrong user" do
-		# 	let(:wrong_user) { FactoryGirl.create(:user) }
-		# 	before do
-		# 		signin(user)
-		# 		visit edit_user_path(wrong_user)
-		# 	end
-
-		# 	specify { respons.should redirect_to(root_path) }
-		# end
 	end
 end
