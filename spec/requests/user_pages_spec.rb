@@ -81,7 +81,8 @@ describe "User" do
 			describe "with invalid information" do
 				before { click_button submit }
 
-				it "?should not update user?"
+				specify { user.name.should 	== user.reload.name }
+				specify { user.email.should == user.reload.email }
 
 				describe "after submission" do
 					
@@ -91,9 +92,11 @@ describe "User" do
 			end
 
 			describe "with valid information" do
-				before { update_user(user) }				
+				before { update_user(user) }
+
+				specify { user.reload.name.should 	== "Updated Name" }
+				specify { user.reload.email.should 	== "updated_email@example.com"}
 				
-				it "?should update user?"
 
 				describe "after submission" do
 
