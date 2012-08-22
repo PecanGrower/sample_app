@@ -8,9 +8,12 @@ describe "User" do
 
 	describe "#new" do
 		before { visit signup_path }
+
+		describe "page" do
 		
-		it { should have_selector "h1", 		text: 'Sign up'}
-		it { should have_selector "title", 	text: full_title('Sign up')}
+			it { should have_selector "h1", 		text: 'Sign up'}
+			it { should have_selector "title", 	text: full_title('Sign up')}
+		end
 
 		describe "form" do
 			let(:submit) { "Create my account" }
@@ -52,19 +55,25 @@ describe "User" do
 		let (:user) { FactoryGirl.create(:user) }
 		before { visit user_path(user)}
 
-		it { should have_selector "h1",			text: "#{user.name}" }
-		it { should have_selector "title",	text: full_title("#{user.name}") }
-		it { should have_selector "img",		src: "gravatar.com/avatar/" }
+		describe "page" do
+
+			it { should have_selector "h1",			text: "#{user.name}" }
+			it { should have_selector "title",	text: full_title("#{user.name}") }
+			it { should have_selector "img",		src: "gravatar.com/avatar/" }
+		end
 	end
 
 	describe "#edit" do
 		let (:user) { FactoryGirl.create(:user) }
 		before { visit edit_user_path(user) }
 
-		it { should have_selector "title",	text: "Edit user" }
-		it { should have_selector "h1",			text: "Update your profile" }
-		it { should have_link			"change",	href: "http://gravatar.com/emails" }
-		it { should have_selector "img",		src: "gravatar.com/avatar/" }
+		describe "page" do
+			
+			it { should have_selector "title",	text: "Edit user" }
+			it { should have_selector "h1",			text: "Update your profile" }
+			it { should have_link			"change",	href: "http://gravatar.com/emails" }
+			it { should have_selector "img",		src: "gravatar.com/avatar/" }
+		end
 
 		describe "form" do
 			let(:submit) { "Save changes" }
