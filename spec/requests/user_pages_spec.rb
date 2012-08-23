@@ -140,4 +140,8 @@ describe "User" do
 			end
 		end
 	end
+
+	describe "#delete" do
+		
+	end
 end
