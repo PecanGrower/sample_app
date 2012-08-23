@@ -34,11 +34,13 @@ describe "Authentication" do
 			it { should have_link 'Profile', 	href: user_path(user) }
 			it { should have_link 'Settings', href: edit_user_path(user) }
 			it { should have_link 'Sign out', href: signout_path }
-			it { should_not have_link 'Sign in', href: signin_path }
+			it { should_not have_link 'Sign in' }
 
 			describe "followed by signout" do
 				before { click_link "Sign out" }
 				it { should have_link 'Sign in', href: signin_path }
+				it { should_not have_link 'Profile' }
+				it { should_not have_link 'Settings' }
 			end
 		end
 	end
