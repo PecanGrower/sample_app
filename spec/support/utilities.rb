@@ -18,6 +18,12 @@ def signup(user)
   click_button "Create my account"
 end
 
+def sign_out
+  click_link = "Sign out"
+  #Sign out when not using Capybara as well
+  cookies[:remember_token] = nil
+end
+
 def update_user(user)
   visit edit_user_path(user)
   fill_in "Name",         with: "Updated Name"

@@ -84,13 +84,23 @@ describe "Authentication" do
 					describe "then signing in" do
 						before { signin(user) }
 						it { should have_selector "title", text: "Edit user" }
+
+						describe "then subsequently signing in" do
+							before do
+							  sign_out
+							  visit root_path
+							  signin(user)
+							end
+
+							it { should have_selector "title", text: user.name }
+						end
 					end
 				end
 
 				describe "submitting a PUT request to the Users#update action" do
 					before { put user_path(user) }
 					specify { response.should redirect_to(signin_path)}
-				end
+				end				
 			end
 		end
 
