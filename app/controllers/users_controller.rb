@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
 
+  before_filter :signed_out, only: [:new, :create]
   before_filter :signed_in_user, only: [:index, :edit, :update]
   before_filter :correct_user, only: [:edit, :update]
   before_filter :admin_user, only: [:destroy]
@@ -47,6 +48,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+    def signed_out
+      redirect_to root_path unless !signed_in?
+    end
 
     def signed_in_user
       if !signed_in?

@@ -47,6 +47,24 @@ describe "Authentication" do
 
 	describe "authorization" do
 		let(:user) { FactoryGirl.create(:user) }
+
+		describe "for signed-in users" do
+			before { signin user }
+			
+			describe "in the Users controller" do
+				
+				describe "visiting the new page" do
+					before { visit  new_user_path }
+
+					it { should have_selector 'h1', text: 'Sample App' }
+				end
+
+				describe "submitting a POST request to the Users#create action" do
+					before { post users_path }
+					specify { response.should redirect_to(root_path)}
+				end
+			end
+		end
 		
 		describe "for non-signed-in users" do
 
