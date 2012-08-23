@@ -125,13 +125,30 @@ describe "Authentication" do
 		describe "for non-admins" do
 			let(:non_admin) { FactoryGirl.create(:user) }
 
-			before { signin user }
+			before { signin non_admin }
 			
 			describe "in the Users controller" do
 				
 				describe "submitting a DELETE request to the Users#destroy action" do
 					before { delete user_path(user) }
 					specify { response.should redirect_to(root_path) }
+				end
+			end
+		end
+
+		describe "for admins" do
+			let(:admin) { FactoryGirl.create(:admin) }
+
+			before { signin admin }
+
+			describe "in the Users controller" do
+
+				describe "submitting a DELETE request for self" do
+					
+					it "should not delete self" do
+						expect { delete user_path(admin) }.to change(User, :count).by(0)
+					end
+
 				end
 			end
 		end
