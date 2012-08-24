@@ -5,13 +5,15 @@ describe Micropost do
   let(:user) { FactoryGirl.create(:user) }
 
   before do
-  	@micropost = user.microposts.new(content: "Lorem ipsum")
+  	@micropost = user.microposts.build(content: "Lorem ipsum")
   end
 
   subject { @micropost }
 
   it { should respond_to :content }
+  it { should respond_to :user_id }
   it { should respond_to :user }
+  its(:user) { should == user }
 
   it { should be_valid }
 
@@ -28,8 +30,8 @@ describe Micropost do
   	
   	describe "content:" do
   		
-  		describe "when not present" do
-  			before { @micropost.content = "" }
+  		describe "when blank" do
+  			before { @micropost.content = " " }
   			it { should_not be_valid }
   		end
 
@@ -38,23 +40,15 @@ describe Micropost do
   			it { should_not be_valid }
   		end
   	end
-  end
 
-  describe "order" do
-		let!(:old_micropost) do
-			FactoryGirl.create(:micropost, 	content: "Oldest post", user: user,
-																			created_at: 1.day.ago )
-		end 
-		let!(:new_micropost) do
-			FactoryGirl.create(:micropost, 	content: "Newest post", user: user,
-																			created_at: 1.hour.ago )
-		end
-		before { @microposts = Micropost.all }
-
-  	it "should be DESC by created_at" do
-  		@microposts.should == [new_micropost, old_micropost]
+  	describe "user_id" do
+  		
+  		describe "when not present" do
+  			before { @micropost.user_id = nil }
+  			it { should_not be_valid }
+  		end
   	end
-  	
   end
+
 
 end
