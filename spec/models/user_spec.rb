@@ -31,6 +31,7 @@ describe User do
   it { should respond_to :admin }
   it { should respond_to :authenticate }
   it { should respond_to :remember_token }
+  it { should respond_to :microposts }
 
   it { should be_valid }
   it { should_not be_admin }
@@ -42,9 +43,21 @@ describe User do
         User.new(admin: true)
       end.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
     end
+
+    it "should not allow access to password_digest" do
+      expect do
+        User.new(password_digest: "password")
+      end.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
+
+    it "should not allow access to remember_token" do
+      expect do
+        User.new(remember_token: "remember_token")
+      end.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
   end
 
-  describe "validates" do
+  describe "validations for" do
 
     describe "name:" do
 
@@ -97,7 +110,7 @@ describe User do
       	it { should_not be_valid }
       end
 
-      describe "email address with mixed case" do
+      describe "when email address has mixed case" do
         let(:mixed_case_email) {"Foo@ExAMPle.CoM"}
 
         it "should be saved as all lower-case" do
@@ -125,7 +138,7 @@ describe User do
       	it { should_not be_valid }
       end
 
-      describe "with a password that's too short" do
+      describe "when password is too short" do
         before { @user.password = @user.password_confirmation = "a" * 5 }
         it { should_not be_valid }
       end
@@ -133,31 +146,28 @@ describe User do
   end
 
   describe "authentication" do
+  	before { @user.save }
+  	let(:found_user) { User.find_by_email(@user.email) }
 
-    describe "return value of authenticate method" do
-    	before { @user.save }
-    	let(:found_user) { User.find_by_email(@user.email) }
+  	describe "with valid password" do
 
-    	describe "with valid password" do
+  		it { should == found_user.authenticate(@user.password) }
+  	end
 
-    		it { should == found_user.authenticate(@user.password) }
-    	end
+  	describe "with invalid password" do
+  		let(:user_for_invalid_password) { found_user.authenticate("invalid")}
 
-    	describe "with invalid password" do
-    		let(:user_for_invalid_password) { found_user.authenticate("invalid")}
+  		it { should_not == user_for_invalid_password }
+  		specify { user_for_invalid_password.should be_false }
+  	end
 
-    		it { should_not == user_for_invalid_password }
-    		specify { user_for_invalid_password.should be_false }
-    	end
-    end
-
-    describe "remember token" do
-      before { @user.save }
+    describe "user's remember_token" do
       its(:remember_token) { should_not be_blank }
     end
   end
 
   describe "authorization" do
+
     describe "with admin attribute set to 'true'" do
       before do
         @user.save!
