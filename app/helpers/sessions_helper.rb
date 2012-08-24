@@ -26,6 +26,14 @@ module SessionsHelper
 		cookies.delete(:remember_token)
 	end
 
+	# If user is signed-out, redirect to sign-in page
+  def signed_in_user
+	  if !signed_in?
+	    store_location
+	    redirect_to signin_path, notice: "Please sign in." 
+	  end
+	end
+
 	def redirect_back_or(default)
 		redirect_to(session[:return_to] || default)
 		session.delete(:return_to)

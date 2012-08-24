@@ -4,47 +4,49 @@ describe "Authentication" do
 
 	subject { page }
 
-	describe "signin page" do
-		before { visit signin_path }
-		it { should have_selector 'title',	text: 'Sign in' }
-		it { should have_selector 'h1',		 	text: 'Sign in'}
-		it { should have_link 'Sign up now!', href: signup_path }
+	describe "session#new" do
+
+		describe "page" do
+			before { visit signin_path }
+			it { should have_selector 'title',	text: 'Sign in' }
+			it { should have_selector 'h1',		 	text: 'Sign in'}
+			it { should have_link 'Sign up now!', href: signup_path }
+		end
+		describe "form" do
+			let (:user) { FactoryGirl.create(:user)}
+			before { visit signin_path }
+
+			describe "with invalid information" do
+				before { click_button "Sign in" }
+				it { should have_selector 'title', text: 'Sign in' }
+				it { should have_error_message }
+
+				describe "after visiting another page" do
+					before { click_link 'Home' }
+					it { should_not have_error_message }
+				end
+			end
+
+			describe "with valid information" do
+				before { signin(user) }
+				it { should have_selector 'title', text: user.name }
+
+				it { should have_link 'Users', 		href: users_path }
+				it { should have_link 'Profile', 	href: user_path(user) }
+				it { should have_link 'Settings', href: edit_user_path(user) }
+				it { should have_link 'Sign out', href: signout_path }
+				it { should_not have_link 'Sign in' }
+
+				describe "followed by signout" do
+					before { click_link "Sign out" }
+					it { should have_link 'Sign in', href: signin_path }
+					it { should_not have_link 'Profile' }
+					it { should_not have_link 'Settings' }
+				end
+			end
+		end
 	end
 	
-	describe "signin form" do
-		let (:user) { FactoryGirl.create(:user)}
-		before { visit signin_path }
-
-		describe "with invalid information" do
-			before { click_button "Sign in" }
-			it { should have_selector 'title', text: 'Sign in' }
-			it { should have_error_message }
-
-			describe "after visiting another page" do
-				before { click_link 'Home' }
-				it { should_not have_error_message }
-			end
-		end
-
-		describe "with valid information" do
-			before { signin(user) }
-			it { should have_selector 'title', text: user.name }
-
-			it { should have_link 'Users', 		href: users_path }
-			it { should have_link 'Profile', 	href: user_path(user) }
-			it { should have_link 'Settings', href: edit_user_path(user) }
-			it { should have_link 'Sign out', href: signout_path }
-			it { should_not have_link 'Sign in' }
-
-			describe "followed by signout" do
-				before { click_link "Sign out" }
-				it { should have_link 'Sign in', href: signin_path }
-				it { should_not have_link 'Profile' }
-				it { should_not have_link 'Settings' }
-			end
-		end
-	end
-
 	describe "authorization" do
 		let(:user) { FactoryGirl.create(:user) }
 
@@ -54,9 +56,9 @@ describe "Authentication" do
 			describe "in the Users controller" do
 				
 				describe "visiting the new page" do
-					before { visit  new_user_path }
-
-					it { should have_selector 'h1', text: 'Sample App' }
+					before { get new_user_path }
+					specify { response.should redirect_to(root_path) }
+					
 				end
 
 				describe "submitting a POST request to the Users#create action" do
@@ -102,6 +104,20 @@ describe "Authentication" do
 					specify { response.should redirect_to(signin_path)}
 				end				
 			end
+
+			describe "in the Microposts controller" do
+
+				describe "submitting to the create action" do
+					before { post microposts_path }
+					specify { response.should redirect_to(signin_path) }
+				end
+
+				describe "submitting to the destroy action" do
+					before { delete micropost_path(FactoryGirl.create(:micropost)) }
+					specify { response.should redirect_to(signin_path) }
+				end
+				
+			end
 		end
 
 		describe "for wrong user" do
@@ -111,8 +127,8 @@ describe "Authentication" do
 			describe "in the Users controller" do
 				
 				describe "visiting the edit page" do
-					before { visit edit_user_path(wrong_user) }
-					it { should have_selector 'h1', text: "Sample App" }
+					before { get edit_user_path(wrong_user) }
+					specify { response.should redirect_to(root_path) }
 				end
 
 				describe "submitting a PUT request to the Users#update action" do
