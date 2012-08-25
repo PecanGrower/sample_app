@@ -9,11 +9,11 @@ describe "User" do
 	describe "#index" do
 		let(:user) { FactoryGirl.create(:user) }
 		
-		before(:all) { 30.times { FactoryGirl.create(:user) } }
-		after(:all) { User.delete_all }
 		
 		before(:each) do
 			signin(user)
+      FactoryGirl.create(:user, name: "Bob", email: "bob@example.com")
+      FactoryGirl.create(:user, name: "Ben", email: "ben@example.com")
 			visit users_path
 		end
 		
@@ -23,6 +23,9 @@ describe "User" do
 			it { should have_selector "h1",			text: "All users" }
 
 			describe "pagination" do
+				before(:all) 	{ 30.times { FactoryGirl.create(:user) } }
+				after(:all) 	{ User.delete_all }
+
 
 				it { should have_selector "div.pagination" }
 				
@@ -120,6 +123,18 @@ describe "User" do
 				it { should have_content(m1.content) }
 				it { should have_content(m2.content) }
 				it { should have_content(user.microposts.count) }
+
+	      describe "pagination" do
+	        before(:all) { 30.times { FactoryGirl.create(:micropost, user: user) } }
+	        after(:all)  { User.delete_all }
+
+	        it { should have_selector "div.pagination" }
+	        it "should display all microposts" do
+	          user.microposts.paginate(page: 1).each do |micropost|
+	            page.should have_selector("li", text: micropost.content)
+	          end
+	        end
+	      end
 			end
 		end
 	end
