@@ -31,6 +31,17 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
+
+      describe "micropost count" do
+
+        it { should have_content "#{user.microposts.count} microposts" }
+
+        describe "pluralization" do
+          before { click_link 'delete' }
+
+          it { should have_content "1 micropost" }     
+        end
+      end
     end
   end
 
