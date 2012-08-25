@@ -7,7 +7,7 @@ describe "Micropost" do
 	let(:user) { FactoryGirl.create(:user) }
 	before { signin user }
 
-	describe "micropost create" do
+	describe "#create" do
 		before { visit root_path }
 
 		describe "with invalid information" do
