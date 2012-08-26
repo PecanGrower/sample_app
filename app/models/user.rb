@@ -17,6 +17,11 @@ class User < ActiveRecord::Base
   has_secure_password
 
   has_many :microposts, dependent: :destroy
+  has_many :relationships, :foreign_key => "follower_id"
+  has_many :reverse_relationships, :class_name => "Relationship", 
+                                   :foreign_key => "followed_id"
+  has_many :followed_users, :through => :relationships, source: :followed
+  has_many :followers, :through => :reverse_relationships, source: :follower
 
   validates :name, presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -31,6 +36,21 @@ class User < ActiveRecord::Base
   def feed
     # This is preliminary. See "Following users" for the full implementation.
     Micropost.where("user_id = ?", self.id)
+  end
+
+  def following?(other_user)
+    # Boolean for testing existance of Relationship
+    relationships.find_by_followed_id(other_user.id)
+  end
+
+  def follow!(other_user)
+    # Create Relationship
+    self.relationships.create!(followed_id: other_user.id)
+  end
+
+  def unfollow!(other_user)
+    # Destroy Relationship
+    self.relationships.find_by_followed_id(other_user.id).destroy
   end
 
   private
